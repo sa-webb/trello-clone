@@ -4,23 +4,27 @@ import { ColumnContainer, ColumnTitle } from "../styles";
 import { useAppState } from "../context";
 import { Card } from "./Card";
 
-interface IProps {
+interface ColumnProps {
   title: string;
   index: number;
+  id: string;
 }
 
-export const Column: React.FC<IProps> = ({ title, index }) => {
-  const { state } = useAppState();
+export const Column: React.FC<ColumnProps> = ({ title, index, id }) => {
+  const { state, dispatch } = useAppState();
+
   return (
     <ColumnContainer>
       <ColumnTitle>{title}</ColumnTitle>
-      {state.lists[index].tasks.map(task => (
-        <Card text={task.text} key={task.id} />
+      {state.lists[index].tasks.map((task, i) => (
+        <Card text={task.text} key={task.id} index={i} />
       ))}
       <AddNewItem
-        toggleButtonText="+ Add another task"
-        onAdd={console.log}
         dark
+        toggleButtonText="+ Add another card"
+        onAdd={(text) =>
+          dispatch({ type: "ADD_TASK", payload: { text, listId: id } })
+        }
       />
     </ColumnContainer>
   );
