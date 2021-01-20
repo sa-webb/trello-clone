@@ -1,5 +1,6 @@
 import React from "react";
-import { ColumnContainer, ColumnTitle } from "./styles";
+import { AddNewItem } from "./AddNewItem";
+import { ColumnContainer, ColumnTitle } from "../styles";
 
 interface IProps {
   title: string;
@@ -11,6 +12,11 @@ export const Column: React.FC<IProps> = ({ title, children }) => {
     <ColumnContainer>
       <ColumnTitle>{title}</ColumnTitle>
       {children}
+      <AddNewItem
+        toggleButtonText="+ Add another task"
+        onAdd={console.log}
+        dark
+      />
     </ColumnContainer>
   );
 };
