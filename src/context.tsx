@@ -1,6 +1,11 @@
 import React, { createContext, useContext, useReducer } from "react";
 import { nanoid } from "nanoid";
-import { findItemIndexById, overrideItemAtIndex } from "./utils/arrayUtils";
+import {
+  findItemIndexById,
+  moveItem,
+  overrideItemAtIndex,
+} from "./utils/arrayUtils";
+import { DragItem } from "./types/DragItem";
 
 type Action =
   | {
@@ -10,6 +15,17 @@ type Action =
   | {
       type: "ADD_TASK";
       payload: { text: string; listId: string }; // Card element text and parent listId
+    }
+  | {
+      type: "MOVE_LIST";
+      payload: {
+        dragIndex: number;
+        hoverIndex: number;
+      };
+    }
+  | {
+      type: "SET_DRAGGED_ITEM";
+      payload: DragItem | undefined;
     };
 
 const appStateReducer = (state: AppState, action: Action): AppState => {
@@ -48,6 +64,16 @@ const appStateReducer = (state: AppState, action: Action): AppState => {
         ),
       };
     }
+    case "MOVE_LIST": {
+      const { dragIndex, hoverIndex } = action.payload;
+      return {
+        ...state,
+        lists: moveItem(state.lists, dragIndex, hoverIndex),
+      };
+    }
+    case "SET_DRAGGED_ITEM": {
+      return { ...state, draggedItem: action.payload };
+    }
     default: {
       return state;
     }
@@ -67,6 +93,7 @@ interface List {
 
 export interface AppState {
   lists: List[];
+  draggedItem: DragItem | undefined;
 }
 interface AppStateContextProps {
   state: AppState;
@@ -91,6 +118,7 @@ export const AppStateProvider = ({ children }: React.PropsWithChildren<{}>) => {
   );
 };
 
+// @ts-ignore
 const appData: AppState = {
   lists: [
     {
